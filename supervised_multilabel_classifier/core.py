@@ -37,7 +37,9 @@ class Vectorizer(object):
         texts, categories, ids = utility.read(file_name, [id_col], [x_col], [y_col])
         y_train = self.get_one_hot_encoding(categories)
         x_train = [self.get_average_word_embedding(text[0]) for text in texts]
-        vec2id = [] #dict(zip(list(x_train), ids))
+        vec2id = []
+        for idx, x in enumerate(x_train):
+            vec2id.append((x, ids[idx][0]))
         return x_train, y_train, vec2id
 
 
@@ -52,11 +54,11 @@ class Predictor(object):
     def predict(self, x):
         return self.classifier.predict(x)
 
-    def find_match(self, vectors, match, vec2Ids):
+    def find_match(self, vec2Ids, match, take=5):
         retrieval = []
 
-        for i in range(len(vectors)):
-            retrieval.append((1 - spatial.distance.cosine(match, vectors[i][0]), vectors[i][1]))
+        for i in range(len(vec2Ids)):
+            retrieval.append((1 - spatial.distance.cosine(match, vec2Ids[i][0]), vec2Ids[i][1]))
 
         retrieval.sort(reverse=True)
-        return retrieval
+        return retrieval[:take]

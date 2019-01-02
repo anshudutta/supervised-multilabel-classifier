@@ -43,4 +43,7 @@ def assert_prediction(text, y_test):
     vec = pytest.vec
     x_test = vec.get_average_word_embedding(text)
     y_predicted = vec.get_classes_from_vector(pytest.predictor.predict([x_test]))
+    matches = pytest.predictor.find_match(pytest.vec2ids, x_test)
+
     assert (y_predicted == y_test)
+    assert (len(matches) > 0)
