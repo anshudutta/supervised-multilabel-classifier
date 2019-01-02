@@ -14,7 +14,7 @@ def test_fixture():
     model = utility.load_model(50000)
 
     vec = core.Vectorizer(logger, model)
-    x, y = vec.get_vectors(pytest.file_name, "Text", "Category")
+    x, y, pytest.vec2ids = vec.get_vectors(pytest.file_name, "ID", "Text", "Category")
     pytest.x_train, pytest.x_test, pytest.y_train, pytest.y_test = train_test_split(x, y, test_size=0.2)
 
     pytest.predictor = core.Predictor(logger)

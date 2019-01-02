@@ -33,11 +33,12 @@ class Vectorizer(object):
         doc = [word for word in self.get_tokens(text) if word in self.model.wv.vocab]
         return np.mean(self.model.wv[doc], axis=0)
 
-    def get_vectors(self, file_name, x_col, y_col):
-        texts, categories = utility.read(file_name, [x_col], [y_col])
+    def get_vectors(self, file_name, id_col, x_col, y_col):
+        texts, categories, ids = utility.read(file_name, [id_col], [x_col], [y_col])
         y_train = self.get_one_hot_encoding(categories)
         x_train = [self.get_average_word_embedding(text[0]) for text in texts]
-        return x_train, y_train
+        vec2id = [] #dict(zip(list(x_train), ids))
+        return x_train, y_train, vec2id
 
 
 class Predictor(object):
@@ -51,11 +52,11 @@ class Predictor(object):
     def predict(self, x):
         return self.classifier.predict(x)
 
-    def find_match(self, vectors, vector):
+    def find_match(self, vectors, match, vec2Ids):
         retrieval = []
 
         for i in range(len(vectors)):
-            retrieval.append((1 - spatial.distance.cosine(vector, vectors[i][0]), vectors[i][1]))
+            retrieval.append((1 - spatial.distance.cosine(match, vectors[i][0]), vectors[i][1]))
 
         retrieval.sort(reverse=True)
         return retrieval

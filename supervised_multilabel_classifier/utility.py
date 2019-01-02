@@ -30,10 +30,10 @@ def load_model(limit=300000):
     return model
 
 
-def read(source, x_col, y_col):
+def read(source, id_col, x_col, y_col):
     reader = pd.read_csv(source)
-    return process_x_y(reader[x_col], reader[y_col])
+    return process_cols(reader[x_col], reader[y_col], reader[id_col])
 
 
-def process_x_y(x, y):
-    return x.values, [[c.strip() for c in classes[0].split(",")] for classes in y.values]
+def process_cols(x, y, z):
+    return x.values, [[c.strip() for c in classes[0].split(",")] for classes in y.values], z.values
