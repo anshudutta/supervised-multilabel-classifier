@@ -5,12 +5,13 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import LinearSVC
 from scipy import spatial
-from supervised_resume_matcher import utility
+from supervised_multilabel_classifier import utility
 
 
 class Vectorizer(object):
-    def __init__(self, logger):
+    def __init__(self, logger, model):
         self.logger = logger
+        self.model = model
         self.punctuations = ['(', ')', ';', ':', '[', ']', ',']
         self.mlb = None
 
@@ -20,7 +21,7 @@ class Vectorizer(object):
         self.mlb = MultiLabelBinarizer(classes=classes)
         return self.mlb.fit_transform(y)
 
-    def get_labels(self, prediction):
+    def get_classes_from_vector(self, prediction):
         return self.mlb.inverse_transform(prediction)
 
     def get_tokens(self, text):
@@ -28,26 +29,23 @@ class Vectorizer(object):
         keywords = [word for word in tokens if not word in self.punctuations]
         return keywords
 
-    def get_average_word_embedding(self, text, model):
-        doc = [word for word in self.get_tokens(text) if word in model.wv.vocab]
-        return np.mean(model.wv[doc], axis=0)
+    def get_average_word_embedding(self, text):
+        doc = [word for word in self.get_tokens(text) if word in self.model.wv.vocab]
+        return np.mean(self.model.wv[doc], axis=0)
 
-    def get_vectors(self, file_name, x_col, y_col, model):
+    def get_vectors(self, file_name, x_col, y_col):
         texts, categories = utility.read(file_name, [x_col], [y_col])
         y_train = self.get_one_hot_encoding(categories)
-        x_train = [self.get_average_word_embedding(text[0], model) for text in texts]
+        x_train = [self.get_average_word_embedding(text[0]) for text in texts]
         return x_train, y_train
 
 
 class Predictor(object):
-    def __init__(self, log, vectorizer, model):
+    def __init__(self, log):
         self.log = log
-        self.vectorizer = vectorizer
-        self.classifier = None
-        self.model = model
+        self.classifier = OneVsRestClassifier(LinearSVC(random_state=0))
 
     def fit(self, x_train, y_train):
-        self.classifier = OneVsRestClassifier(LinearSVC(random_state=0))
         self.classifier.fit(x_train, y_train)
 
     def predict(self, x):

@@ -1,7 +1,7 @@
 import os
 import pytest
-from supervised_resume_matcher import utility
-from supervised_resume_matcher import core
+from supervised_multilabel_classifier import utility
+from supervised_multilabel_classifier import core
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
@@ -13,14 +13,14 @@ def test_fixture():
     logger = utility.config_logger()
     model = utility.load_model(50000)
 
-    vec = core.Vectorizer(logger)
-    pytest.predictor = core.Predictor(logger, vec, model)
-
-    x, y = vec.get_vectors(pytest.file_name, "Text", "Category", model)
+    vec = core.Vectorizer(logger, model)
+    x, y = vec.get_vectors(pytest.file_name, "Text", "Category")
     pytest.x_train, pytest.x_test, pytest.y_train, pytest.y_test = train_test_split(x, y, test_size=0.2)
+
+    pytest.predictor = core.Predictor(logger)
     pytest.predictor.fit(pytest.x_train, pytest.y_train)
+
     pytest.vec = vec
-    pytest.model = model
 
 
 def test_model(test_fixture):
@@ -40,6 +40,7 @@ def test_prediction(test_fixture):
 
 
 def assert_prediction(text, y_test):
-    x_test = pytest.vec.get_average_word_embedding(text, pytest.model)
-    y_predicted = pytest.vec.get_labels(pytest.predictor.predict([x_test]))
+    vec = pytest.vec
+    x_test = vec.get_average_word_embedding(text)
+    y_predicted = vec.get_classes_from_vector(pytest.predictor.predict([x_test]))
     assert (y_predicted == y_test)
