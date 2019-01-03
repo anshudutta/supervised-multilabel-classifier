@@ -5,47 +5,51 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import LinearSVC
 from scipy import spatial
-from supervised_multilabel_classifier import utility
 
 
-class Vectorizer(object):
-    def __init__(self, logger, model):
-        self.logger = logger
+def find_match(vec2Ids, match, take=5):
+    retrieval = []
+    for i in range(len(vec2Ids)):
+        retrieval.append((1 - spatial.distance.cosine(match, vec2Ids[i][0]), vec2Ids[i][1]))
+
+    retrieval.sort(reverse=True)
+    return retrieval[:take]
+
+
+class AweVectorizer(object):
+    def __init__(self, model):
         self.model = model
         self.punctuations = ['(', ')', ';', ':', '[', ']', ',']
-        self.mlb = None
-
-    def get_one_hot_encoding(self, y):
-        categories = [item for sublist in y for item in sublist]
-        classes = list(set(categories))
-        self.mlb = MultiLabelBinarizer(classes=classes)
-        return self.mlb.fit_transform(y)
-
-    def get_classes_from_vector(self, prediction):
-        return self.mlb.inverse_transform(prediction)
 
     def get_tokens(self, text):
         tokens = utils.tokenize(remove_stopwords(text))
         keywords = [word for word in tokens if not word in self.punctuations]
         return keywords
 
-    def get_average_word_embedding(self, text):
+    def transform(self, texts):
+        return [self.get_vector(text[0]) for text in texts]
+
+    def get_vector(self, text):
         doc = [word for word in self.get_tokens(text) if word in self.model.wv.vocab]
         return np.mean(self.model.wv[doc], axis=0)
 
-    def get_vectors(self, file_name, id_col, x_col, y_col):
-        texts, categories, ids = utility.read(file_name, [id_col], [x_col], [y_col])
-        y_train = self.get_one_hot_encoding(categories)
-        x_train = [self.get_average_word_embedding(text[0]) for text in texts]
-        vec2id = []
-        for idx, x in enumerate(x_train):
-            vec2id.append((x, ids[idx][0]))
-        return x_train, y_train, vec2id
+
+class MultiLabelVectorizer(object):
+    def __init__(self):
+        self.mlb = None
+
+    def transform(self, y):
+        categories = [item for sublist in y for item in sublist]
+        classes = list(set(categories))
+        self.mlb = MultiLabelBinarizer(classes=classes)
+        return self.mlb.fit_transform(y)
+
+    def inverse_transform(self, vector):
+        return self.mlb.inverse_transform(vector)
 
 
 class Predictor(object):
-    def __init__(self, log):
-        self.log = log
+    def __init__(self):
         self.classifier = OneVsRestClassifier(LinearSVC(random_state=0))
 
     def fit(self, x_train, y_train):
@@ -53,12 +57,3 @@ class Predictor(object):
 
     def predict(self, x):
         return self.classifier.predict(x)
-
-    def find_match(self, vec2Ids, match, take=5):
-        retrieval = []
-
-        for i in range(len(vec2Ids)):
-            retrieval.append((1 - spatial.distance.cosine(match, vec2Ids[i][0]), vec2Ids[i][1]))
-
-        retrieval.sort(reverse=True)
-        return retrieval[:take]

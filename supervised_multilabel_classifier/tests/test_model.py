@@ -1,31 +1,33 @@
 import os
 import pytest
-from supervised_multilabel_classifier import utility
 from supervised_multilabel_classifier import core
+from supervised_multilabel_classifier import service
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
 
 @pytest.fixture
 def test_fixture():
-    pytest.file_name = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data_set/training_data.csv'))
+    file_name = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data_set/training_data.csv'))
 
-    logger = utility.config_logger()
-    model = utility.load_model(50000)
+    model = service.load_model()
 
-    vec = core.Vectorizer(logger, model)
-    x, y, pytest.vec2ids = vec.get_vectors(pytest.file_name, "ID", "Text", "Category")
+    x_vec = core.AweVectorizer(model)
+    y_vec = core.MultiLabelVectorizer()
+
+    x, y, vec2ids = service.get_vectors_from_csv(file_name, ["ID", "Text", "Category"], x_vec, y_vec)
     pytest.x_train, pytest.x_test, pytest.y_train, pytest.y_test = train_test_split(x, y, test_size=0.1)
-
-    pytest.predictor = core.Predictor(logger)
-    pytest.predictor.fit(pytest.x_train, pytest.y_train)
-
-    pytest.vec = vec
+    pytest.x, pytest.y, pytest.vec2ids = x, y, vec2ids
+    pytest.x_vec, pytest.y_vec = x_vec, y_vec
 
 
 def test_model(test_fixture):
-    y_predicted = pytest.predictor.predict(pytest.x_test)
-    accuracy = accuracy_score(pytest.y_test, y_predicted)
+    x_train, x_test, y_train, y_test = train_test_split(pytest.x, pytest.y, test_size=0.1)
+
+    predictor = core.Predictor()
+    predictor.fit(x_train, y_train)
+    y_predicted = predictor.predict(x_test)
+    accuracy = accuracy_score(y_test, y_predicted)
     assert (accuracy > 0.8)
 
 
@@ -40,10 +42,13 @@ def test_prediction(test_fixture):
 
 
 def assert_prediction(text, y_test):
-    vec = pytest.vec
-    x_test = vec.get_average_word_embedding(text)
-    y_predicted = vec.get_classes_from_vector(pytest.predictor.predict([x_test]))
-    matches = pytest.predictor.find_match(pytest.vec2ids, x_test)
+    predictor = core.Predictor()
+    predictor.fit(pytest.x, pytest.y)
+
+    x_test = pytest.x_vec.transform([text])
+    predicted = predictor.predict(x_test)
+    y_predicted = pytest.y_vec.inverse_transform(predicted)
+    matches = core.find_match(pytest.vec2ids, x_test)
 
     assert (y_predicted == y_test)
     assert (len(matches) > 0)
