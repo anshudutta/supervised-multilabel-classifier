@@ -27,11 +27,15 @@ class AweVectorizer(object):
         return keywords
 
     def transform(self, texts):
-        return [self.get_vector(text[0]) for text in texts]
+        return [self.get_vector(text) for text in texts]
 
     def get_vector(self, text):
-        doc = [word for word in self.get_tokens(text) if word in self.model.wv.vocab]
-        return np.mean(self.model.wv[doc], axis=0)
+        try:
+            doc = [word for word in self.get_tokens(text) if word in self.model.vocab]
+            return np.mean(self.model[doc], axis=0)
+        except Exception as e:
+            return np.zeros(300,)
+
 
 
 class MultiLabelVectorizer(object):

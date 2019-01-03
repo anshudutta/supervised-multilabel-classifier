@@ -32,4 +32,4 @@ def read(source, id_col, x_col, y_col):
 
 
 def process_cols(x, y, z):
-    return x.values, [[c.strip() for c in classes[0].split(",")] for classes in y.values], z.values
+    return x.values, [[c.strip()[0] for c in classes[0].split(",")] for classes in y.values], z.values

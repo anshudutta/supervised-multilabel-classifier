@@ -1,0 +1,60 @@
+import pytest
+from supervised_multilabel_classifier import core
+from supervised_multilabel_classifier import service
+from sklearn.metrics import accuracy_score, precision_score, recall_score
+from nltk.corpus import reuters
+
+
+# NOTE: Install reuters corpus using python console - nltk.download('reuters')
+
+@pytest.fixture
+def test_fixture():
+    documents = reuters.fileids()
+
+    train_docs_id = get_ids("train", documents)
+    test_docs_id = get_ids("test", documents)
+
+    train_docs = get_text(train_docs_id)
+    test_docs = get_text(test_docs_id)
+
+    model = service.load_model()
+
+    x_vec = core.AweVectorizer(model)
+    y_vec = core.MultiLabelVectorizer()
+
+    train_categories = get_categories(train_docs_id)
+    test_categories = get_categories(test_docs_id)
+
+    x_train = x_vec.transform(train_docs)
+    x_test = x_vec.transform(test_docs)
+    y_train = y_vec.transform(train_categories)
+    y_true = y_vec.transform(test_categories)
+
+    pytest.x_train, pytest.x_test, pytest.y_train, pytest.y_true = x_train, x_test, y_train, y_true
+    pytest.x_vec, pytest.y_vec = x_vec, y_vec
+
+
+def get_ids(t, documents):
+    return list(filter(lambda doc: doc.startswith(t) and len(reuters.raw(doc)) > 100, documents))
+
+
+def get_text(ids):
+    return [reuters.raw(doc_id) for doc_id in ids]
+
+
+def get_categories(ids):
+    return [reuters.categories(doc_id) for doc_id in ids]
+
+
+def test_model(test_fixture):
+    predictor = core.Predictor()
+    predictor.fit(pytest.x_train, pytest.y_train)
+    predicted = predictor.predict(pytest.x_test)
+    accuracy = accuracy_score(pytest.y_true, predicted)
+    # tp / (tp + fp) The precision is intuitively the ability of the classifier not to label as positive a sample
+    # that is negative.
+    precision = precision_score(pytest.y_true, predicted, average='macro')
+
+    # tp / (tp + fn) The recall is intuitively the ability of the classifier to find all the positive samples.
+    recall = recall_score(pytest.y_true, predicted, average='macro')
+    assert (accuracy > 0.7)

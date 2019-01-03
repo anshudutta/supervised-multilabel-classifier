@@ -4,6 +4,7 @@ from supervised_multilabel_classifier import core
 from supervised_multilabel_classifier import service
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
+from nltk.corpus import reuters
 
 
 @pytest.fixture
@@ -16,7 +17,6 @@ def test_fixture():
     y_vec = core.MultiLabelVectorizer()
 
     x, y, vec2ids = service.get_vectors_from_csv(file_name, ["ID", "Text", "Category"], x_vec, y_vec)
-    pytest.x_train, pytest.x_test, pytest.y_train, pytest.y_test = train_test_split(x, y, test_size=0.1)
     pytest.x, pytest.y, pytest.vec2ids = x, y, vec2ids
     pytest.x_vec, pytest.y_vec = x_vec, y_vec
 
