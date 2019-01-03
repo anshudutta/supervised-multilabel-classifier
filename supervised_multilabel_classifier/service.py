@@ -13,13 +13,16 @@ def get_vectors_from_csv(file_name, cols, x_vec, y_vec):
     return x_train, y_train, vec2id
 
 
-def load_model(limit=300000):
+def load_model(limit=None):
     model_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'model'))
     raw_model_path = os.path.join(model_path, 'GoogleNews-vectors-negative300.bin')
     norm_model_path = os.path.join(model_path, 'GoogleNews-vectors-gensim-normed.bin')
 
     if not os.path.isfile(norm_model_path):
-        raw_model = gensim.models.KeyedVectors.load_word2vec_format(raw_model_path, binary=True, limit=limit)
+        if limit is None:
+            raw_model = gensim.models.KeyedVectors.load_word2vec_format(raw_model_path, binary=True)
+        else:
+            raw_model = gensim.models.KeyedVectors.load_word2vec_format(raw_model_path, binary=True, limit=limit)
         raw_model.save(norm_model_path)
     model = gensim.models.KeyedVectors.load(norm_model_path, mmap='r')
     model.syn0norm = model.syn0
