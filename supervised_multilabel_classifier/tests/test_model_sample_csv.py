@@ -28,7 +28,7 @@ def test_model(test_fixture):
     predictor.fit(x_train, y_train)
     y_predicted = predictor.predict(x_test)
     accuracy = accuracy_score(y_test, y_predicted)
-    assert (accuracy > 0.8)
+    assert (accuracy > 0.5)
 
 
 def test_prediction(test_fixture):

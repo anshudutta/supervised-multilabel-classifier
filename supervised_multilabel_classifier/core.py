@@ -34,8 +34,7 @@ class AweVectorizer(object):
             doc = [word for word in self.get_tokens(text) if word in self.model.vocab]
             return np.mean(self.model[doc], axis=0)
         except Exception as e:
-            return np.zeros(300,)
-
+            return np.zeros(300, )
 
 
 class MultiLabelVectorizer(object):

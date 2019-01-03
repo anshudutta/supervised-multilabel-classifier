@@ -25,7 +25,7 @@ def load_model(limit=None):
             raw_model = gensim.models.KeyedVectors.load_word2vec_format(raw_model_path, binary=True, limit=limit)
         raw_model.save(norm_model_path)
     model = gensim.models.KeyedVectors.load(norm_model_path, mmap='r')
-    model.syn0norm = model.syn0
+    model.vectors_norm = model.vectors
     return model
 
 
@@ -35,4 +35,4 @@ def read(source, id_col, x_col, y_col):
 
 
 def process_cols(x, y, z):
-    return x.values, [[c.strip()[0] for c in classes[0].split(",")] for classes in y.values], z.values
+    return [text[0] for text in x.values], [[c.strip() for c in classes[0].split(",")] for classes in y.values], z.values
