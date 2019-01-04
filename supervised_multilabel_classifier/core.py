@@ -1,5 +1,5 @@
 import numpy as np
-from gensim import utils
+from gensim.utils import tokenize
 from gensim.parsing.preprocessing import remove_stopwords
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.multiclass import OneVsRestClassifier
@@ -22,7 +22,7 @@ class AweVectorizer(object):
         self.punctuations = ['(', ')', ';', ':', '[', ']', ',']
 
     def get_tokens(self, text):
-        tokens = utils.tokenize(remove_stopwords(text))
+        tokens = tokenize(remove_stopwords(text))
         keywords = [word for word in tokens if not word in self.punctuations]
         return keywords
 

@@ -1,7 +1,7 @@
 import pytest
-from supervised_multilabel_classifier import core
+from supervised_multilabel_classifier import core, reuters_nltk
 from supervised_multilabel_classifier import service
-from sklearn.metrics import accuracy_score, precision_score, recall_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, classification_report
 from nltk.corpus import reuters
 
 
@@ -9,22 +9,11 @@ from nltk.corpus import reuters
 
 @pytest.fixture
 def test_fixture():
-    documents = reuters.fileids()
-
-    train_docs_id = get_ids("train", documents)
-    test_docs_id = get_ids("test", documents)
-
-    train_docs = get_text(train_docs_id)
-    test_docs = get_text(test_docs_id)
-
     model = service.load_model()
 
     x_vec = core.AweVectorizer(model)
     y_vec = core.MultiLabelVectorizer()
-
-    train_categories = get_categories(train_docs_id)
-    test_categories = get_categories(test_docs_id)
-
+    train_docs, test_docs, train_categories, test_categories = reuters_nltk.get_docs()
     x_train = x_vec.transform(train_docs)
     x_test = x_vec.transform(test_docs)
     y_train = y_vec.transform(train_categories)
@@ -32,18 +21,6 @@ def test_fixture():
 
     pytest.x_train, pytest.x_test, pytest.y_train, pytest.y_true = x_train, x_test, y_train, y_true
     pytest.x_vec, pytest.y_vec = x_vec, y_vec
-
-
-def get_ids(t, documents):
-    return list(filter(lambda doc: doc.startswith(t) and len(reuters.raw(doc)) > 100, documents))
-
-
-def get_text(ids):
-    return [reuters.raw(doc_id) for doc_id in ids]
-
-
-def get_categories(ids):
-    return [reuters.categories(doc_id) for doc_id in ids]
 
 
 def test_model(test_fixture):
@@ -58,3 +35,5 @@ def test_model(test_fixture):
     # tp / (tp + fn) The recall is intuitively the ability of the classifier to find all the positive samples.
     recall = recall_score(pytest.y_true, predicted, average='macro')
     assert (accuracy > 0.7)
+    print(classification_report(pytest.y_true, predicted, target_names=reuters.categories()))
+

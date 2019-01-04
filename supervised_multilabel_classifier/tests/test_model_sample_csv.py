@@ -1,10 +1,10 @@
 import os
+import numpy as np
 import pytest
 from supervised_multilabel_classifier import core
 from supervised_multilabel_classifier import service
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-from nltk.corpus import reuters
 
 
 @pytest.fixture
@@ -25,8 +25,8 @@ def test_model(test_fixture):
     x_train, x_test, y_train, y_test = train_test_split(pytest.x, pytest.y, test_size=0.1)
 
     predictor = core.Predictor()
-    predictor.fit(x_train, y_train)
-    y_predicted = predictor.predict(x_test)
+    predictor.fit(np.asarray(x_train), np.asarray(y_train))
+    y_predicted = predictor.predict(np.asarray(x_test))
     accuracy = accuracy_score(y_test, y_predicted)
     assert (accuracy > 0.5)
 
