@@ -1,5 +1,5 @@
 import pytest
-from supervised_multilabel_classifier import core, reuters_nltk
+from supervised_multilabel_classifier import core
 from supervised_multilabel_classifier.service import get_vectors_from_reuters, load_model
 from sklearn.metrics import accuracy_score, precision_score, recall_score, classification_report
 from nltk.corpus import reuters
@@ -13,9 +13,8 @@ def test_fixture():
 
     x_vec = core.AweVectorizer(model)
     y_vec = core.MultiLabelVectorizer()
-    train_docs, test_docs, train_categories, test_categories = reuters_nltk.get_docs()
 
-    x_train, x_test, y_train, y_true = get_vectors_from_reuters(train_docs, test_docs, train_categories, test_categories, x_vec, y_vec)
+    x_train, x_test, y_train, y_true = get_vectors_from_reuters(x_vec, y_vec)
 
     pytest.x_train, pytest.x_test, pytest.y_train, pytest.y_true = x_train, x_test, y_train, y_true
     pytest.x_vec, pytest.y_vec = x_vec, y_vec

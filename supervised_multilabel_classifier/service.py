@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+from supervised_multilabel_classifier.reuters_nltk import get_docs
+
 
 def get_vectors_from_csv(file_name, cols, x_vec, y_vec, test_size):
     texts, categories, ids = read(file_name, [cols[0]], [cols[1]], [cols[2]])
@@ -17,7 +19,8 @@ def get_vectors_from_csv(file_name, cols, x_vec, y_vec, test_size):
     return np.asarray(x_train), np.asarray(x_test), np.asarray(y_train), np.asarray(y_true), vec2id
 
 
-def get_vectors_from_reuters(train_docs, test_docs, train_categories, test_categories, x_vec, y_vec):
+def get_vectors_from_reuters(x_vec, y_vec):
+    train_docs, test_docs, train_categories, test_categories = get_docs()
     x_train = x_vec.transform(train_docs)
     x_test = x_vec.transform(test_docs)
     y_train = y_vec.transform(train_categories)
