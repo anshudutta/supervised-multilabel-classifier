@@ -1,6 +1,6 @@
 import pytest
 from supervised_multilabel_classifier import core, reuters_nltk
-from supervised_multilabel_classifier import service
+from supervised_multilabel_classifier.service import get_vectors_from_reuters, load_model
 from sklearn.metrics import accuracy_score, precision_score, recall_score, classification_report
 from nltk.corpus import reuters
 
@@ -9,15 +9,13 @@ from nltk.corpus import reuters
 
 @pytest.fixture
 def test_fixture():
-    model = service.load_model()
+    model = load_model()
 
     x_vec = core.AweVectorizer(model)
     y_vec = core.MultiLabelVectorizer()
     train_docs, test_docs, train_categories, test_categories = reuters_nltk.get_docs()
-    x_train = x_vec.transform(train_docs)
-    x_test = x_vec.transform(test_docs)
-    y_train = y_vec.transform(train_categories)
-    y_true = y_vec.transform(test_categories)
+
+    x_train, x_test, y_train, y_true = get_vectors_from_reuters(train_docs, test_docs, train_categories, test_categories, x_vec, y_vec)
 
     pytest.x_train, pytest.x_test, pytest.y_train, pytest.y_true = x_train, x_test, y_train, y_true
     pytest.x_vec, pytest.y_vec = x_vec, y_vec
@@ -34,6 +32,6 @@ def test_model(test_fixture):
 
     # tp / (tp + fn) The recall is intuitively the ability of the classifier to find all the positive samples.
     recall = recall_score(pytest.y_true, predicted, average='macro')
-    assert (accuracy > 0.7)
     print(classification_report(pytest.y_true, predicted, target_names=reuters.categories()))
+    assert (accuracy > 0.7)
 

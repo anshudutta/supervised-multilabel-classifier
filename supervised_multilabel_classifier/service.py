@@ -1,16 +1,29 @@
 import os
 import gensim
+import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
 
-def get_vectors_from_csv(file_name, cols, x_vec, y_vec):
+def get_vectors_from_csv(file_name, cols, x_vec, y_vec, test_size):
     texts, categories, ids = read(file_name, [cols[0]], [cols[1]], [cols[2]])
     y_train = y_vec.transform(categories)
     x_train = x_vec.transform(texts)
     vec2id = []
     for idx, x in enumerate(x_train):
         vec2id.append((x, ids[idx][0]))
-    return x_train, y_train, vec2id
+
+    x_train, x_test, y_train, y_true = train_test_split(x_train, y_train, test_size=test_size)
+    return np.asarray(x_train), np.asarray(x_test), np.asarray(y_train), np.asarray(y_true), vec2id
+
+
+def get_vectors_from_reuters(train_docs, test_docs, train_categories, test_categories, x_vec, y_vec):
+    x_train = x_vec.transform(train_docs)
+    x_test = x_vec.transform(test_docs)
+    y_train = y_vec.transform(train_categories)
+    y_true = y_vec.transform(test_categories)
+
+    return x_train, x_test, y_train, y_true
 
 
 def load_model(limit=None):

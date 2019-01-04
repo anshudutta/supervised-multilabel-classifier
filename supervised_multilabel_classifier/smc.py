@@ -5,7 +5,7 @@ from nltk.corpus import reuters
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from supervised_multilabel_classifier import reuters_nltk
-from supervised_multilabel_classifier.service import load_model
+from supervised_multilabel_classifier.service import load_model, get_vectors_from_reuters
 from supervised_multilabel_classifier.core import Predictor, AweVectorizer, MultiLabelVectorizer, find_match
 from supervised_multilabel_classifier.utility import config_logger, Spinner
 from supervised_multilabel_classifier.service import get_vectors_from_csv
@@ -33,10 +33,8 @@ def main():
 
         spinner = Spinner()
         spinner.start()
-        x_train = x_vec.transform(train_docs)
-        x_test = x_vec.transform(test_docs)
-        y_train = y_vec.transform(train_categories)
-        y_true = y_vec.transform(test_categories)
+        x_train, x_test, y_train, y_true = get_vectors_from_reuters(train_docs, train_categories,
+                                                                    test_categories, x_vec, y_vec)
         spinner.stop()
 
     else:
