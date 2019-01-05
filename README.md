@@ -30,9 +30,15 @@ pytest -s -r a
 ## Usage
 From the root folder run
 
+Default mode - Reuters corpus
 ```python
 python run.py
 ```
+Pass csv as arguments
+```python
+python run.py --model "absolute/Path/To/File.csv"
+```
+
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

@@ -40,15 +40,19 @@ class AweVectorizer(object):
 class MultiLabelVectorizer(object):
     def __init__(self):
         self.mlb = None
+        self.classes = None
 
     def transform(self, y):
         categories = [item for sublist in y for item in sublist]
-        classes = list(set(categories))
-        self.mlb = MultiLabelBinarizer(classes=classes)
+        self.classes = list(set(categories))
+        self.mlb = MultiLabelBinarizer(classes=self.classes)
         return self.mlb.fit_transform(y)
 
     def inverse_transform(self, vector):
         return list(self.mlb.inverse_transform(vector)[0])
+
+    def get_classes(self):
+        return self.classes
 
 
 class Predictor(object):

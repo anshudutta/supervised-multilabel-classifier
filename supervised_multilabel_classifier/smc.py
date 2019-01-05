@@ -1,7 +1,7 @@
+import argparse
 import sys
 import warnings
 
-from nltk.corpus import reuters
 from sklearn.metrics import classification_report
 
 from supervised_multilabel_classifier.core import Predictor, AweVectorizer, MultiLabelVectorizer, find_match
@@ -33,6 +33,12 @@ def get_multi_line_input():
 def main():
     print('Running multi-label text classifier.')
     warnings.filterwarnings("ignore")
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model', type=argparse.FileType('r', encoding='UTF-8'), required=False)
+    args = parser.parse_args()
+    filename = args.model
+
     logger = config_logger()
     spinner = Spinner()
 
@@ -41,7 +47,7 @@ def main():
     model = load_model()
     spinner.stop()
 
-    filename = get_filename_from_arg()
+    print(filename)
 
     x_vec = AweVectorizer(model)
     y_vec = MultiLabelVectorizer()
@@ -68,7 +74,7 @@ def main():
     y_predicted = predictor.predict(x_test)
 
     print('Training stats:')
-    print(classification_report(y_true, y_predicted, target_names=reuters.categories()))
+    print(classification_report(y_true, y_predicted, target_names=y_vec.get_classes()))
 
     text = get_multi_line_input()
 
