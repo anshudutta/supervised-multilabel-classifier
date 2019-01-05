@@ -14,7 +14,7 @@ def test_fixture():
     x_vec = core.AweVectorizer(model)
     y_vec = core.MultiLabelVectorizer()
 
-    x_train, x_test, y_train, y_true = get_vectors_from_reuters(x_vec, y_vec)
+    x_train, x_test, y_train, y_true, vec2ids = get_vectors_from_reuters(x_vec, y_vec)
 
     pytest.x_train, pytest.x_test, pytest.y_train, pytest.y_true = x_train, x_test, y_train, y_true
     pytest.x_vec, pytest.y_vec = x_vec, y_vec

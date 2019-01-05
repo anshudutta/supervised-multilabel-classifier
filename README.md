@@ -22,10 +22,16 @@ pip install <dependencies>
 ## How to run tests
 Tests are run using pytest. A simple model test is provided as an example with the csv file in /data_set folder. A more robust test is provided to test the model with reuters_21578 corpus
 
+From the root folder run
+```python
+pytest -s -r a
+```
+
 ## Usage
+From the root folder run
 
 ```python
-TBA
+python run.py
 ```
 
 ## Contributing
