@@ -32,11 +32,11 @@ def test_model(test_fixture):
 
 
 def test_prediction(test_fixture):
-    y_test = [("ny",)]
+    y_test = ["ny"]
     text = "New York is a lovely city although it is not a capital"
     assert_prediction(text, y_test)
 
-    y_test = [("london", "paris")]
+    y_test = ["london", "paris"]
     text = "I am going to visit London and Paris"
     assert_prediction(text, y_test)
 

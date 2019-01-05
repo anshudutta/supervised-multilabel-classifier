@@ -17,19 +17,19 @@ def get_vectors_from_csv(file_name, cols, x_vec, y_vec, test_size):
 
 
 def get_vectors_from_reuters(x_vec, y_vec):
-    train_docs, test_docs, train_categories, test_categories = get_docs()
+    train_docs, test_docs, train_categories, test_categories, ids = get_docs()
     x_train = x_vec.transform(train_docs)
     x_test = x_vec.transform(test_docs)
     y_train = y_vec.transform(train_categories)
     y_true = y_vec.transform(test_categories)
 
-    return x_train, x_test, y_train, y_true, get_vec_to_id(x_train, train_categories)
+    return x_train, x_test, y_train, y_true, get_vec_to_id(x_train, ids)
 
 
 def get_vec_to_id(x_train, ids):
     vec2id = []
     for idx, x in enumerate(x_train):
-        vec2id.append((x, ids[idx][0]))
+        vec2id.append((x, ids[idx]))
     return vec2id
 
 
@@ -55,7 +55,7 @@ def read(source, id_col, x_col, y_col):
 
 
 def process_cols(x, y, z):
-    return process_x(x), process_y(y), z.values
+    return process_x(x), process_y(y), z.values.flatten()
 
 
 def process_x(x):

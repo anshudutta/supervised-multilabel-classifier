@@ -13,7 +13,7 @@ def get_docs():
     train_categories = get_categories(train_docs_id)
     test_categories = get_categories(test_docs_id)
 
-    return train_docs, test_docs, train_categories, test_categories
+    return train_docs, test_docs, train_categories, test_categories, train_docs_id
 
 
 def get_ids(t, documents):

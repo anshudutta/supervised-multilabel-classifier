@@ -48,7 +48,7 @@ class MultiLabelVectorizer(object):
         return self.mlb.fit_transform(y)
 
     def inverse_transform(self, vector):
-        return self.mlb.inverse_transform(vector)
+        return list(self.mlb.inverse_transform(vector)[0])
 
 
 class Predictor(object):

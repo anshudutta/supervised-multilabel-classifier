@@ -76,9 +76,9 @@ def main():
         x_test = x_vec.transform([text])
         y_predicted = predictor.predict(x_test)
         predicted = y_vec.inverse_transform(y_predicted)
-        print("prediction: {0}".format([",".join(p) for p in predicted]))
+        print("prediction: {0}".format(predicted))
         matches = find_match(vec2ids, x_test)
-        print("matches: {0}".format(matches))
+        print("Most similar: {0}".format(matches))
     else:
         print("Invalid entry")
 

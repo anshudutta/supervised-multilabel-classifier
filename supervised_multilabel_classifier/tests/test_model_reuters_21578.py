@@ -25,12 +25,9 @@ def test_model(test_fixture):
     predictor.fit(pytest.x_train, pytest.y_train)
     predicted = predictor.predict(pytest.x_test)
     accuracy = accuracy_score(pytest.y_true, predicted)
-    # tp / (tp + fp) The precision is intuitively the ability of the classifier not to label as positive a sample
+    # tp / (tp + fp) => The precision is intuitively the ability of the classifier not to label as positive a sample
     # that is negative.
-    precision = precision_score(pytest.y_true, predicted, average='macro')
-
-    # tp / (tp + fn) The recall is intuitively the ability of the classifier to find all the positive samples.
-    recall = recall_score(pytest.y_true, predicted, average='macro')
+    # tp / (tp + fn) => The recall is intuitively the ability of the classifier to find all the positive samples.
     print(classification_report(pytest.y_true, predicted, target_names=reuters.categories()))
     assert (accuracy > 0.7)
 
