@@ -11,12 +11,9 @@ def get_vectors_from_csv(file_name, cols, x_vec, y_vec, test_size):
     texts, categories, ids = read(file_name, [cols[0]], [cols[1]], [cols[2]])
     y_train = y_vec.transform(categories)
     x_train = x_vec.transform(texts)
-    vec2id = []
-    for idx, x in enumerate(x_train):
-        vec2id.append((x, ids[idx][0]))
 
     x_train, x_test, y_train, y_true = train_test_split(x_train, y_train, test_size=test_size)
-    return np.asarray(x_train), np.asarray(x_test), np.asarray(y_train), np.asarray(y_true), vec2id
+    return np.asarray(x_train), np.asarray(x_test), np.asarray(y_train), np.asarray(y_true), get_vec_to_id(x_train, ids)
 
 
 def get_vectors_from_reuters(x_vec, y_vec):
@@ -26,7 +23,14 @@ def get_vectors_from_reuters(x_vec, y_vec):
     y_train = y_vec.transform(train_categories)
     y_true = y_vec.transform(test_categories)
 
-    return x_train, x_test, y_train, y_true
+    return x_train, x_test, y_train, y_true, get_vec_to_id(x_train, train_categories)
+
+
+def get_vec_to_id(x_train, ids):
+    vec2id = []
+    for idx, x in enumerate(x_train):
+        vec2id.append((x, ids[idx][0]))
+    return vec2id
 
 
 def load_model(limit=None):

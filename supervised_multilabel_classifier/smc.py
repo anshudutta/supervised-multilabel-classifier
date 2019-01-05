@@ -17,6 +17,19 @@ def get_filename_from_arg():
         return None
 
 
+def get_multi_line_input():
+    print("Enter/Paste your content. Ctrl-D or Ctrl-Z ( windows ) to save it.")
+    contents = []
+    while True:
+        try:
+            line = input()
+            contents.append(line)
+        except EOFError:
+            break
+
+    return ''.join(contents)
+
+
 def main():
     print('Running multi-label text classifier.')
     warnings.filterwarnings("ignore")
@@ -36,10 +49,10 @@ def main():
     vec2ids = None
 
     if filename is None:
-        print('No training set provided, running default mode on reuters corpus.')
+        print('No training set provided, switching to default mode - reuters corpus.')
         print('Training model...')
         spinner.start()
-        x_train, x_test, y_train, y_true = get_vectors_from_reuters(x_vec, y_vec)
+        x_train, x_test, y_train, y_true, vec2ids = get_vectors_from_reuters(x_vec, y_vec)
         spinner.stop()
 
     else:
@@ -57,26 +70,17 @@ def main():
     print('Training stats:')
     print(classification_report(y_true, y_predicted, target_names=reuters.categories()))
 
-    while True:
-        print("Enter/Paste your content. Ctrl-D or Ctrl-Z ( windows ) to save it.")
-        contents = []
-        while True:
-            try:
-                line = input()
-            except EOFError:
-                break
-            contents.append(line)
+    text = get_multi_line_input()
 
-        text = ''.join(contents)
-        if len(text) > 0:
-            x_test = x_vec.transform([text])
-            y_predicted = predictor.predict(x_test)
-            predicted = y_vec.inverse_transform(y_predicted)
-            print("prediction: {0}".format([",".join(p) for p in predicted]))
-            if vec2ids is not None:
-                print("matches:".format(find_match(vec2ids, x_test)))
-        else:
-            print("Invalid entry")
+    if len(text) > 0:
+        x_test = x_vec.transform([text])
+        y_predicted = predictor.predict(x_test)
+        predicted = y_vec.inverse_transform(y_predicted)
+        print("prediction: {0}".format([",".join(p) for p in predicted]))
+        matches = find_match(vec2ids, x_test)
+        print("matches: {0}".format(matches))
+    else:
+        print("Invalid entry")
 
 
 if __name__ == "__main__":
