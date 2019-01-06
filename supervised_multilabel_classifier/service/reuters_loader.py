@@ -1,4 +1,17 @@
 from nltk.corpus import reuters
+from supervised_multilabel_classifier.service.data_loader import DataLoader
+
+
+class ReutersLoader(DataLoader):
+
+    def get_vectors(self, x_vec, y_vec):
+        train_docs, test_docs, train_categories, test_categories, ids = get_docs()
+        x_train = x_vec.transform(train_docs)
+        x_test = x_vec.transform(test_docs)
+        y_train = y_vec.transform(train_categories)
+        y_true = y_vec.transform(test_categories)
+
+        return x_train, x_test, y_train, y_true, super().get_vec_to_id(x_train, ids)
 
 
 def get_docs():

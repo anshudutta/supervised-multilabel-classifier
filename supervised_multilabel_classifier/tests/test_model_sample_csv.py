@@ -4,13 +4,14 @@ import pytest
 from sklearn.metrics import accuracy_score
 
 from supervised_multilabel_classifier import core
-from supervised_multilabel_classifier import service
+from supervised_multilabel_classifier.service.model_loader import load_model
+from supervised_multilabel_classifier.service.csv_loader import CsvLoader
 
 
 @pytest.fixture
 def test_fixture():
     filename = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data_set/training_data.csv'))
-    model = service.load_model()
+    model = load_model()
 
     x_vec = core.AweVectorizer(model)
     y_vec = core.MultiLabelVectorizer()
@@ -20,9 +21,8 @@ def test_fixture():
 
 
 def test_model(test_fixture):
-    x_train, x_test, y_train, y_true, vec2ids = service.get_vectors_from_csv(pytest.filename,
-                                                                             ["ID", "Text", "Category"],
-                                                                             pytest.x_vec, pytest.y_vec, 0.1)
+    data_loader = CsvLoader(pytest.filename, ["ID", "Text", "Category"])
+    x_train, x_test, y_train, y_true, vec2ids = data_loader.get_vectors(pytest.x_vec, pytest.y_vec)
 
     predictor = core.Predictor()
     predictor.fit(x_train, y_train)
@@ -42,9 +42,8 @@ def test_prediction(test_fixture):
 
 
 def assert_prediction(text, y_true):
-    x_train, x_d, y_train, y_d, vec2ids = service.get_vectors_from_csv(pytest.filename,
-                                                                       ["ID", "Text", "Category"],
-                                                                       pytest.x_vec, pytest.y_vec, 0)
+    data_loader = CsvLoader(pytest.filename, ["ID", "Text", "Category"])
+    x_train, x_d, y_train, y_d, vec2ids = data_loader.get_vectors(pytest.x_vec, pytest.y_vec, 0)
     predictor = core.Predictor()
     predictor.fit(x_train, y_train)
 

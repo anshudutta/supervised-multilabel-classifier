@@ -1,20 +1,20 @@
 import argparse
-import sys
 import warnings
 
 from sklearn.metrics import classification_report
 
 from supervised_multilabel_classifier.core import Predictor, AweVectorizer, MultiLabelVectorizer, find_match
-from supervised_multilabel_classifier.service import get_vectors_from_csv
-from supervised_multilabel_classifier.service import load_model, get_vectors_from_reuters
+from supervised_multilabel_classifier.service.csv_loader import CsvLoader
+from supervised_multilabel_classifier.service.model_loader import load_model
+from supervised_multilabel_classifier.service.reuters_loader import ReutersLoader
 from supervised_multilabel_classifier.utility import config_logger, Spinner
 
 
 def get_filename_from_arg():
-    if len(sys.argv) > 1:
-        return sys.argv[1]
-    else:
-        return None
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model', type=argparse.FileType('r', encoding='UTF-8'), required=False)
+    args = parser.parse_args()
+    return args.model
 
 
 def get_multi_line_input():
@@ -34,10 +34,7 @@ def main():
     print('Running multi-label text classifier.')
     warnings.filterwarnings("ignore")
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=argparse.FileType('r', encoding='UTF-8'), required=False)
-    args = parser.parse_args()
-    filename = args.model
+    filename = get_filename_from_arg()
 
     logger = config_logger()
     spinner = Spinner()
@@ -47,33 +44,25 @@ def main():
     model = load_model()
     spinner.stop()
 
-    print(filename)
-
     x_vec = AweVectorizer(model)
     y_vec = MultiLabelVectorizer()
 
-    vec2ids = None
-
     if filename is None:
         print('No training set provided, switching to default mode - reuters corpus.')
-        print('Training model...')
-        spinner.start()
-        x_train, x_test, y_train, y_true, vec2ids = get_vectors_from_reuters(x_vec, y_vec)
-        spinner.stop()
-
+        data_loader = ReutersLoader()
     else:
-        print('Training model...')
-        spinner.start()
-        x_train, x_test, y_train, y_true, vec2ids = get_vectors_from_csv(filename,
-                                                                         ["ID", "Text", "Category"],
-                                                                         x_vec, y_vec, 0.1)
-        spinner.stop()
+        data_loader = CsvLoader(filename, ["ID", "Text", "Category"])
 
+    print('Loading training data model...')
+    spinner.start()
+    x_train, x_test, y_train, y_true, vec2ids = data_loader.get_vectors(x_vec, y_vec)
+    spinner.stop()
+
+    print('Training model...')
     predictor = Predictor()
     predictor.fit(x_train, y_train)
     y_predicted = predictor.predict(x_test)
-
-    print('Training stats:')
+    print('Finished training model. Stats: ')
     print(classification_report(y_true, y_predicted, target_names=y_vec.get_classes()))
 
     text = get_multi_line_input()
