@@ -8,7 +8,9 @@ An example is provided on classifying movie genre based on plot synopsys
 
 ## Prerequisites
 1. Install Pretrained Word2Vec model on GoogleNews, unzip and place it in the /models folder.
+
 Refer https://gist.github.com/yanaiela/cfef50380de8a5bfc8c272bb0c91d6e1
+
 2. Install reuters corpus from nltk to run the test
 ```python
 import nltk
