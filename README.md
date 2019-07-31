@@ -1,6 +1,9 @@
 # Supervised Multi-Label Classifier
 
-Supervised Multi-Label Classifier is a Python library for multi-class multi-label classification
+Supervised Multi-Label Classifier is a Python library for multi-class multi-label classification. This algorithm can classify texts into pre trained categories. 
+This was originally written to run match job seekers to jobs by parsing their resumes but can be extended to solve similar problems.
+
+An example is provided on classifying movie genre based on plot synopsys
 
 ## Prerequisites
 1. Install Pretrained Word2Vec model on GoogleNews, unzip and place it in the /models folder.
@@ -38,7 +41,7 @@ Pass csv as arguments
 ```python
 python run.py --model "absolute/Path/To/File.csv"
 ```
-
+To run the movie-matching algorithm use `data/imdb_dataset.csv`
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
