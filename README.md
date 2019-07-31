@@ -1,6 +1,7 @@
 # Supervised Multi-Label Classifier
 
 Supervised Multi-Label Classifier is a Python library for multi-class multi-label classification. This algorithm can classify texts into pre trained categories. 
+
 This was originally written to run match job seekers to jobs by parsing their resumes but can be extended to solve similar problems.
 
 An example is provided on classifying movie genre based on plot synopsys
