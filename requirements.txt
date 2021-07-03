@@ -18,7 +18,7 @@ nltk==3.4.5
 numpy==1.20.3
 pandas==1.2.5
 pluggy==0.8.0
-py==1.7.0
+py==1.10.0
 pyparsing==2.3.0
 pytest==4.0.2
 python-dateutil==2.7.5
