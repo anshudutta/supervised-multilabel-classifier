@@ -18,3 +18,4 @@ echo "$OUT_F"
 wget --load-cookies cookies.txt 'https://docs.google.com/uc?export=download&confirm='$CODE'&id=0B7XkCwpI5KDYNlNUTTlSS21pQmM' -O $OUT_F
 mv ./GoogleNews* supervised_multilabel_classifier/model
 rm ./cookies.txt
+gunzip -d ./supervised_multilabel_classifier/model/GoogleNews-vectors-negative300.bin.gz

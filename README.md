@@ -6,19 +6,11 @@ An example is provided on classifying movie genre based on plot synopsys
 
 ## Prerequisites
 
-- Install pre-trained Word2Vec [model](https://code.google.com/archive/p/word2vec/) on GoogleNews, unzip and place it in the `/models` folder.
-
 ```bash
- ./scripts/word2vec300.sh
+ ./scripts/setup.sh
 ```
-
-- Install reuters corpus from nltk to run the test
-
-```python
-import nltk
-nltk.download('reuters')
-
-```
+- Installs pre-trained Word2Vec [model](https://code.google.com/archive/p/word2vec/)
+- Installs reuters corpus from nltk to run the test
 
 ## Installation
 
