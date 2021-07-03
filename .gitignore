@@ -224,3 +224,4 @@ venv.bak/
 dmypy.json
 .vscode
 *GoogleNews*
+cookies.*
