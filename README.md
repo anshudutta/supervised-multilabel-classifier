@@ -97,9 +97,6 @@ Most similar: [(0.6800497770309448, 'tt0102250/L.A. Story'), (0.6765267848968506
 
 ```
 
-Run the movie example
-
-
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
