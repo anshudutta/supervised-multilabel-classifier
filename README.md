@@ -97,6 +97,7 @@ Most similar: [(0.6800497770309448, 'tt0102250/L.A. Story'), (0.6765267848968506
 ```
 
 The description: `I kissed a girl, I liked it`
+
 Prediction: `Drama, Romance, Comedy, Fantasy`
 
 Try it with proper plot synopsys
