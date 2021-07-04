@@ -46,7 +46,7 @@ python run.py
 Pass csv as arguments
 
 ```python
-python run.py --model "absolute/Path/To/File.csv"
+python run.py --model "path/to/file.csv"
 ```
 
 To run the movie-matching algorithm use `data/imdb_dataset.csv`
