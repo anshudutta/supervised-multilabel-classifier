@@ -1,4 +1,7 @@
 **/corpura
 **/model
+**/data_set
 venv
 tests
+Dockerfile
+

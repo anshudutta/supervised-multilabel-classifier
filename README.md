@@ -35,21 +35,34 @@ pytest -s -r a
 
 ## Usage
 
+### DIY
 From the root folder run
 
-Default mode - Reuters corpus
+- Default mode - Reuters corpus
 
 ```python
 python run.py
 ```
 
-Pass csv as arguments
+- Pass csv as arguments
 
 ```python
 python run.py --model "path/to/file.csv"
 ```
 
 To run the movie-matching algorithm use `data/imdb_dataset.csv`
+
+### Docker
+
+```bash
+docker build . -t supervised-multi-classifier
+
+docker run --rm -it \
+-v `pwd`/supervised_multilabel_classifier/model:/home/app/supervised_multilabel_classifier/model \
+-v `pwd`/supervised_multilabel_classifier/data_set:/home/app/supervised_multilabel_classifier/data_set \
+supervised-multi-classifier \
+ --model /home/app/supervised_multilabel_classifier/data_set/imdb_dataset.csv
+```
 
 ## Contributing
 
