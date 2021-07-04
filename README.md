@@ -94,8 +94,12 @@ Enter/Paste your content. Ctrl-D or Ctrl-Z ( windows ) to save it.
 I kissed a girl, I liked it
 prediction: ['Drama', 'Romance', 'Comedy', 'Fantasy']
 Most similar: [(0.6800497770309448, 'tt0102250/L.A. Story'), (0.6765267848968506, 'tt0386005/New Police Story'), (0.6711339950561523, 'tt0338763/Battle Royale II'), (0.669927179813385, 'tt0101507/Boyz n the Hood'), (0.6669382452964783, 'tt0258068/The Quiet American')]
-
 ```
+
+The description: `I kissed a girl, I liked it`
+Prediction: `Drama, Romance, Comedy, Fantasy`
+
+Try it with proper plot synopsys
 
 ## Contributing
 
