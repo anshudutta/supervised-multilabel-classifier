@@ -1,7 +1,7 @@
 nltk==3.6.6
 numpy==1.22.0
 gensim==3.7.3
-scipy==1.7.0
+scipy==1.10.0
 sklearn
 pandas==1.2.5
 pytest==6.2.4
